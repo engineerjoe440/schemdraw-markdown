@@ -1,2 +1,2 @@
-Markdown
+markdown
 schemdraw[svgmath]

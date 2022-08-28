@@ -129,6 +129,16 @@ class SchemDrawPreprocessor(markdown.preprocessors.Preprocessor):
         # Add extracted markdown diagram text.
         code += m.group('code')
 
+        # Format the Code Section
+        code_lines = []
+        for line in code.split("\n"):
+            line = line.strip()
+            if not line.startswith("+="):
+                line = f"+= {line}"
+            line = f"    {line}"
+            code_lines.append(line)
+        code = "\n".join(code_lines)
+
         # Extract diagram source end convert it (if not external)
         if title.lower().endswith(".svg"):
             title = title[:-4]

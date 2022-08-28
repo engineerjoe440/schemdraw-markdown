@@ -1,5 +1,5 @@
-# schemdraw-markdown
-*a simpler way to document simple circuits in markdown*
+# Schemdraw Extension for [Python-Markdown](https://python-markdown.github.io/)
+*a simpler way to document circuits in markdown*
 
 [schemdraw](https://bitbucket.org/cdelker/schemdraw/src/master/) in markdown
 files.

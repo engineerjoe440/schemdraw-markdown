@@ -9,6 +9,10 @@ readme = "README.md"
 license = {file = "LICENSE"}
 classifiers = ["License :: OSI Approved :: MIT License"]
 dynamic = ["version", "description"]
+dependencies = [
+    "markdown",
+    "schemdraw[svgmath]"
+]
 
 [project.urls]
 Home = "https://github.com/engineerjoe440/schemdraw-markdown"
