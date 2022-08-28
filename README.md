@@ -24,3 +24,15 @@ using a code-fenced sample as follows:
 This package makes use of Python's `exec` functionality, which is inherently
 somewhat insecure, as it allows for arbitrary code execution. Only carfully
 curated drawings logic should be used.
+
+## Installation
+
+
+#### Installing from Source
+
+1. Clone Repository
+2. From within local Repository folder, issue:
+
+```shell
+pip install .
+```

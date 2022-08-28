@@ -8,6 +8,8 @@ This plugin implements a block extension which can be used to specify a
 Schematic Diagram which will be converted into an image and inserted in the
 document using [schemdraw](https://bitbucket.org/cdelker/schemdraw/src/master/).
 
+Inspired by [PlantUML-Markdown](https://github.com/mikitex70/plantuml-markdown).
+
 Syntax:
 
     ::schemdraw:: [alt="text for alt"]
@@ -36,7 +38,11 @@ import schemdraw
 import schemdraw.elements as elm
 
 
-# use markdown_py with -v to enable warnings, or with --noisy to enable debug logs
+# Package Version
+__version__ = "0.0.0"
+
+
+# use markdown_py with -v to enable warnings, or with --noisy to enable debug
 logger = logging.getLogger('MARKDOWN')
 
 
@@ -48,7 +54,8 @@ with schemdraw.Drawing(backend='svg') as drawing:
 """
 
 
-# For details see https://pythonhosted.org/Markdown/extensions/api.html#blockparser
+# For details see:
+# https://pythonhosted.org/Markdown/extensions/api.html#blockparser
 class SchemDrawPreprocessor(markdown.preprocessors.Preprocessor):
     # Regular expression inspired from fenced_code
     BLOCK_RE = re.compile(r'''
@@ -174,7 +181,10 @@ class SchemDrawPreprocessor(markdown.preprocessors.Preprocessor):
         img.attrib['alt'] = alt
         img.attrib['title'] = title
 
-        diag_tag = etree.tostring(img, short_empty_elements=self_closed).decode()
+        diag_tag = etree.tostring(
+            img,
+            short_empty_elements=self_closed
+        ).decode()
         diag_tag = diag_tag + map_tag
 
         return (
@@ -196,6 +206,9 @@ class SchemDrawPreprocessor(markdown.preprocessors.Preprocessor):
         # CAUTION! This is a raw execution statement, untrusted logic should not
         #          be executed here.
         exec(drawing_logic)
+
+        with open(filepath, "r", encoding="utf-8") as file:
+            return file.read()
 
 
 # For details see https://pythonhosted.org/Markdown/extensions/api.html#extendmarkdown
