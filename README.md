@@ -1,8 +1,5 @@
-# Schemdraw Extension for [Python-Markdown](https://python-markdown.github.io/)
+# [Schemdraw](https://bitbucket.org/cdelker/schemdraw/src/master/) Extension for [Python-Markdown](https://python-markdown.github.io/)
 *a simpler way to document circuits in markdown*
-
-[schemdraw](https://bitbucket.org/cdelker/schemdraw/src/master/) in markdown
-files.
 
 **Inspiration:** This project is inspired by the wonderful project:
 [`plantuml-markdown`](https://github.com/mikitex70/plantuml-markdown). So,
