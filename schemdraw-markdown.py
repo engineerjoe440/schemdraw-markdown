@@ -25,16 +25,27 @@ Example:
 """
 ################################################################################
 
+import os
 import re
 import base64
 import logging
 from xml.etree import ElementTree as etree
 
 import markdown
+import schemdraw
+import schemdraw.elements as elm
 
 
 # use markdown_py with -v to enable warnings, or with --noisy to enable debug logs
 logger = logging.getLogger('MARKDOWN')
+
+
+# Define the Generic Logical Block
+SCHEMDRAW_SVG_BUILDER = """
+with schemdraw.Drawing(backend='svg') as drawing:
+{logic}
+    drawing.save({filepath})
+"""
 
 
 # For details see https://pythonhosted.org/Markdown/extensions/api.html#blockparser
@@ -93,7 +104,7 @@ class SchemDrawPreprocessor(markdown.preprocessors.Preprocessor):
         # skip fenced code enclosing diagram
         m = self.FENCED_CODE_RE.search(text)
         if m:
-            # check if before the fenced code there is a plantuml diagram
+            # check if before the fenced code there is a schemdraw diagram
             m1 = self.FENCED_BLOCK_RE.search(text[:m.start()])
             if m1 is None:
                 # no diagram, skip this block of text
@@ -111,15 +122,21 @@ class SchemDrawPreprocessor(markdown.preprocessors.Preprocessor):
         title = m.group('title') if m.group('title') else self.config['title']
         width = m.group('width') if m.group('width') else None
         height = m.group('height') if m.group('height') else None
-        source = m.group('source') if m.group('source') else None
 
-        # Extract the PlantUML code.
+        # Extract the schemdraw code.
         code = ""
+        base_dir = self.config['base_dir'] if self.config['base_dir'] else None
         # Add extracted markdown diagram text.
         code += m.group('code')
 
         # Extract diagram source end convert it (if not external)
-        diagram = self._render_diagram(code)
+        if title.lower().endswith(".svg"):
+            title = title[:-4]
+        diagram = self._render_diagram(
+            code=code,
+            base_dir=base_dir,
+            filename=title.replace(" ", "_")
+        )
         self_closed = True  # tags are always self closing
         map_tag = ''
 
@@ -155,9 +172,20 @@ class SchemDrawPreprocessor(markdown.preprocessors.Preprocessor):
             m.start() + len(m.group('indent')) + len(diag_tag)
         )
 
-    def _render_diagram(self, code):
+    def _render_diagram(self, code, base_dir, filename):
         """Render the Diagram"""
         code = code.encode('utf8')
+
+        filepath = os.path.join(base_dir, f"{filename}.svg")
+
+        drawing_logic = SCHEMDRAW_SVG_BUILDER.format(
+            logic=code,
+            filepath=filepath,
+        )
+
+        # CAUTION! This is a raw execution statement, untrusted logic should not
+        #          be executed here.
+        exec(drawing_logic)
 
 
 # For details see https://pythonhosted.org/Markdown/extensions/api.html#extendmarkdown
@@ -169,6 +197,7 @@ class SchemDrawMarkdownExtension(markdown.Extension):
             'title': ["", "Tooltip for the diagram"],
             'priority': ["30", "Extension priority. Higher values means the extension is applied sooner than others. "
                                "Defaults to 30"],
+            'base_dir': [".", "Base directory for external files inclusion"],
         }
 
         # Fix to make links navigable in SVG diagrams

@@ -21,3 +21,9 @@ using a code-fenced sample as follows:
     += elm.SourceSin().up().label('10V')
 ::end-schemdraw::
 ```
+
+## Security Note
+
+This package makes use of Python's `exec` functionality, which is inherently
+somewhat insecure, as it allows for arbitrary code execution. Only carfully
+curated drawings logic should be used.
