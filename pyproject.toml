@@ -16,3 +16,6 @@ dependencies = [
 
 [project.urls]
 Home = "https://github.com/engineerjoe440/schemdraw-markdown"
+
+[tool.flit.module]
+name = "schemdraw_markdown"

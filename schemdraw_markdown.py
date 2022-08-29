@@ -48,9 +48,8 @@ logger = logging.getLogger('MARKDOWN')
 
 # Define the Generic Logical Block
 SCHEMDRAW_SVG_BUILDER = """
-with schemdraw.Drawing(backend='svg') as drawing:
+with schemdraw.Drawing(backend='svg', file="{filepath}") as drawing:
 {logic}
-    drawing.save({filepath})
 """
 
 
@@ -140,10 +139,11 @@ class SchemDrawPreprocessor(markdown.preprocessors.Preprocessor):
         code_lines = []
         for line in code.split("\n"):
             line = line.strip()
-            if not line.startswith("+="):
-                line = f"+= {line}"
-            line = f"    {line}"
-            code_lines.append(line)
+            if len(line) > 0:
+                if not line.startswith("+="):
+                    line = f"+= {line}"
+                line = f"    drawing {line}"
+                code_lines.append(line)
         code = "\n".join(code_lines)
 
         # Extract diagram source end convert it (if not external)
@@ -194,7 +194,8 @@ class SchemDrawPreprocessor(markdown.preprocessors.Preprocessor):
 
     def _render_diagram(self, code, base_dir, filename):
         """Render the Diagram"""
-        code = code.encode('utf8')
+        if filename in ["", " ", None]:
+            filename = "schematic"
 
         filepath = os.path.join(base_dir, f"{filename}.svg")
 
@@ -202,13 +203,15 @@ class SchemDrawPreprocessor(markdown.preprocessors.Preprocessor):
             logic=code,
             filepath=filepath,
         )
+        print("####")
+        print(drawing_logic)
 
         # CAUTION! This is a raw execution statement, untrusted logic should not
         #          be executed here.
         exec(drawing_logic)
 
         with open(filepath, "r", encoding="utf-8") as file:
-            return file.read()
+            return file.read().encode("utf-8")
 
 
 # For details see https://pythonhosted.org/Markdown/extensions/api.html#extendmarkdown
