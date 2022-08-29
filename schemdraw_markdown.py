@@ -31,6 +31,7 @@ import os
 import re
 import base64
 import logging
+from tempfile import TemporaryDirectory
 from xml.etree import ElementTree as etree
 
 import markdown
@@ -202,6 +203,13 @@ class SchemDrawPreprocessor(markdown.preprocessors.Preprocessor):
 
     def _render_diagram(self, code, color, base_dir, filename):
         """Render the Diagram"""
+        # Create a Temporary Directory as Needed
+        temp_path = None
+        if base_dir ==  "":
+            temp_path = TemporaryDirectory()
+            base_dir = temp_path.name
+
+        # Use a valid filename if none provided
         if filename in ["", " ", None]:
             filename = "schematic"
 
@@ -213,7 +221,7 @@ class SchemDrawPreprocessor(markdown.preprocessors.Preprocessor):
             color=color,
             filepath=filepath,
         )
-        print(drawing_logic)
+        
         logger.debug(drawing_logic)
 
         # CAUTION! This is a raw execution statement, untrusted logic should not
@@ -223,7 +231,12 @@ class SchemDrawPreprocessor(markdown.preprocessors.Preprocessor):
         # pylint: enable=exec-used
 
         with open(filepath, "r", encoding="utf-8") as file:
-            return file.read().encode("utf-8")
+            data = file.read().encode("utf-8")
+        
+        if temp_path is not None:
+            temp_path.cleanup()
+
+        return data
 
 
 # For details see:
@@ -250,7 +263,7 @@ class SchemDrawMarkdownExtension(markdown.Extension):
                     "applied sooner than others. Defaults to 30"
                 )
             ],
-            'base_dir': [".", "Base directory for external files inclusion"],
+            'base_dir': ["", "Base directory for external files inclusion"],
         }
 
         # Fix to make links navigable in SVG diagrams
