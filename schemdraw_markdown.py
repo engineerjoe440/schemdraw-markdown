@@ -60,6 +60,7 @@ with schemdraw.Drawing(backend='svg', file="{filepath}") as drawing:
 # For details see:
 # https://pythonhosted.org/Markdown/extensions/api.html#blockparser
 class SchemDrawPreprocessor(markdown.preprocessors.Preprocessor):
+    """Schematic Drawing Preprocessor for Markdown."""
     # Regular expression inspired from fenced_code
     BLOCK_RE = re.compile(r'''
         (?P<indent>[ ]*)
@@ -92,7 +93,6 @@ class SchemDrawPreprocessor(markdown.preprocessors.Preprocessor):
         (?P<code>.*?)(?<=\n)
         (?P=indent)(?P=fence)[ ]*$
         ''', re.MULTILINE | re.DOTALL | re.VERBOSE)
-    # (?P<indent>[ ]*)(?P<fence>(?:~{3}|`{3}))[ ]*(\{?\.?schemdraw)[ ]*\n(?P<code>.*?)(?<=\n)(?P=indent)(?P=fence)$
     FENCED_CODE_RE = re.compile(r'(?P<fence>(?:~{4,}|`{4,})).*?(?P=fence)',
                                 re.MULTILINE | re.DOTALL | re.VERBOSE)
     """Schemdraw Preprocessor for Markdown"""
@@ -229,6 +229,7 @@ class SchemDrawPreprocessor(markdown.preprocessors.Preprocessor):
 # For details see:
 # https://pythonhosted.org/Markdown/extensions/api.html#extendmarkdown
 class SchemDrawMarkdownExtension(markdown.Extension):
+    """Schemdraw Markdown Extension."""
     # For details see:
     # https://pythonhosted.org/Markdown/extensions/api.html#configsettings
     def __init__(self, **kwargs):
@@ -275,6 +276,7 @@ class SchemDrawMarkdownExtension(markdown.Extension):
 
 
 def makeExtension(**kwargs):
+    """Plug in the Extension"""
     return SchemDrawMarkdownExtension(**kwargs)
 
 # END
