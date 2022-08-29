@@ -42,7 +42,7 @@ import schemdraw.elements as elm
 
 
 # Package Version
-__version__ = "0.0.0"
+__version__ = "0.0.1"
 
 
 # use markdown_py with -v to enable warnings, or with --noisy to enable debug
