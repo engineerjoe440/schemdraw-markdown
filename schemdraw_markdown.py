@@ -34,8 +34,11 @@ import logging
 from xml.etree import ElementTree as etree
 
 import markdown
+
+# pylint: disable=unused-import
 import schemdraw
 import schemdraw.elements as elm
+# pylint: enable=unused-import
 
 
 # Package Version
@@ -199,16 +202,17 @@ class SchemDrawPreprocessor(markdown.preprocessors.Preprocessor):
 
         filepath = os.path.join(base_dir, f"{filename}.svg")
 
+        # Format the Python Statements to Execute Drawing
         drawing_logic = SCHEMDRAW_SVG_BUILDER.format(
             logic=code,
             filepath=filepath,
         )
-        print("####")
-        print(drawing_logic)
 
         # CAUTION! This is a raw execution statement, untrusted logic should not
         #          be executed here.
+        # pylint: disable=exec-used
         exec(drawing_logic)
+        # pylint: enable=exec-used
 
         with open(filepath, "r", encoding="utf-8") as file:
             return file.read().encode("utf-8")
@@ -233,13 +237,19 @@ class SchemDrawMarkdownExtension(markdown.Extension):
 
     def extendMarkdown(self, md):
         blockprocessor = SchemDrawPreprocessor(md)
+        # pylint: disable=attribute-defined-outside-init
         blockprocessor.config = self.getConfigs()
-        # need to go before both fenced_code_block and things like retext's PosMapMarkPreprocessor.
-        # Need to go after mdx_include.
+        # pylint: enable=attribute-defined-outside-init
+        # need to go before both fenced_code_block and things like retext's
+        # PosMapMarkPreprocessor. Need to go after mdx_include.
         if markdown.__version_info__[0] < 3:
             md.preprocessors.add('schemdraw', blockprocessor, '_begin')
         else:
-            md.preprocessors.register(blockprocessor, 'schemdraw', int(blockprocessor.config['priority']))
+            md.preprocessors.register(
+                blockprocessor,
+                'schemdraw',
+                int(blockprocessor.config['priority'])
+            )
 
 
 def makeExtension(**kwargs):
