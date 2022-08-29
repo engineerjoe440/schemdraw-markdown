@@ -67,9 +67,10 @@ class SchemDrawPreprocessor(markdown.preprocessors.Preprocessor):
         # args
         \s*(alt=(?P<quot2>"|')(?P<alt>.*?)(?P=quot2))?
         \s*(title=(?P<quot3>"|')(?P<title>.*?)(?P=quot3))?
-        \s*(width=(?P<quot4>"|')(?P<width>[\w\s"']+%?)(?P=quot4))?
-        \s*(height=(?P<quot5>"|')(?P<height>[\w\s"']+%?)(?P=quot5))?
-        \s*(source=(?P<quot6>"|')(?P<source>.*?)(?P=quot6))?
+        \s*(color=(?P<quot4>"|')(?P<color>.*?)(?P=quot4))?
+        \s*(width=(?P<quot5>"|')(?P<width>[\w\s"']+%?)(?P=quot5))?
+        \s*(height=(?P<quot6>"|')(?P<height>[\w\s"']+%?)(?P=quot6))?
+        \s*(source=(?P<quot7>"|')(?P<source>.*?)(?P=quot7))?
         \s*\n
         (?P<code>.*?)(?<=\n)
         (?P=indent)::end-schemdraw::[ ]*$
@@ -82,9 +83,10 @@ class SchemDrawPreprocessor(markdown.preprocessors.Preprocessor):
         # args
         \s*(alt=(?P<quot2>"|')(?P<alt>.*?)(?P=quot2))?
         \s*(title=(?P<quot3>"|')(?P<title>.*?)(?P=quot3))?
-        \s*(width=(?P<quot4>"|')(?P<width>[\w\s"']+%?)(?P=quot4))?
-        \s*(height=(?P<quot5>"|')(?P<height>[\w\s"']+%?)(?P=quot5))?
-        \s*(source=(?P<quot6>"|')(?P<source>.*?)(?P=quot6))?
+        \s*(color=(?P<quot4>"|')(?P<color>.*?)(?P=quot4))?
+        \s*(width=(?P<quot5>"|')(?P<width>[\w\s"']+%?)(?P=quot5))?
+        \s*(height=(?P<quot6>"|')(?P<height>[\w\s"']+%?)(?P=quot6))?
+        \s*(source=(?P<quot7>"|')(?P<source>.*?)(?P=quot7))?
         [ ]*
         }?[ ]*\n                                # Optional closing }
         (?P<code>.*?)(?<=\n)
@@ -211,6 +213,8 @@ class SchemDrawPreprocessor(markdown.preprocessors.Preprocessor):
             color=color,
             filepath=filepath,
         )
+        print(drawing_logic)
+        logger.debug(drawing_logic)
 
         # CAUTION! This is a raw execution statement, untrusted logic should not
         #          be executed here.
