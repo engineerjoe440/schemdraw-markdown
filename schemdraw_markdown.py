@@ -52,6 +52,7 @@ logger = logging.getLogger('MARKDOWN')
 # Define the Generic Logical Block
 SCHEMDRAW_SVG_BUILDER = """
 with schemdraw.Drawing(backend='svg', file="{filepath}") as drawing:
+    drawing.config(color="{color}")
 {logic}
 """
 
@@ -129,6 +130,7 @@ class SchemDrawPreprocessor(markdown.preprocessors.Preprocessor):
         # Parse configuration params
         alt = m.group('alt') if m.group('alt') else self.config['alt']
         title = m.group('title') if m.group('title') else self.config['title']
+        color = m.group('color') if m.group('color') else self.config['color']
         width = m.group('width') if m.group('width') else None
         height = m.group('height') if m.group('height') else None
 
@@ -154,6 +156,7 @@ class SchemDrawPreprocessor(markdown.preprocessors.Preprocessor):
             title = title[:-4]
         diagram = self._render_diagram(
             code=code,
+            color=color,
             base_dir=base_dir,
             filename=title.replace(" ", "_")
         )
@@ -195,7 +198,7 @@ class SchemDrawPreprocessor(markdown.preprocessors.Preprocessor):
             m.start() + len(m.group('indent')) + len(diag_tag)
         )
 
-    def _render_diagram(self, code, base_dir, filename):
+    def _render_diagram(self, code, color, base_dir, filename):
         """Render the Diagram"""
         if filename in ["", " ", None]:
             filename = "schematic"
@@ -205,6 +208,7 @@ class SchemDrawPreprocessor(markdown.preprocessors.Preprocessor):
         # Format the Python Statements to Execute Drawing
         drawing_logic = SCHEMDRAW_SVG_BUILDER.format(
             logic=code,
+            color=color,
             filepath=filepath,
         )
 
@@ -218,15 +222,29 @@ class SchemDrawPreprocessor(markdown.preprocessors.Preprocessor):
             return file.read().encode("utf-8")
 
 
-# For details see https://pythonhosted.org/Markdown/extensions/api.html#extendmarkdown
+# For details see:
+# https://pythonhosted.org/Markdown/extensions/api.html#extendmarkdown
 class SchemDrawMarkdownExtension(markdown.Extension):
-    # For details see https://pythonhosted.org/Markdown/extensions/api.html#configsettings
+    # For details see:
+    # https://pythonhosted.org/Markdown/extensions/api.html#configsettings
     def __init__(self, **kwargs):
         self.config = {
-            'alt': ["schematic drawing", "Text to show when image is not available. Defaults to 'schematic drawing'"],
+            'alt': [
+                "schematic drawing",
+                (
+                    "Text to show when image is not available. Defaults to "
+                    "'schematic drawing'"
+                )
+            ],
             'title': ["", "Tooltip for the diagram"],
-            'priority': ["30", "Extension priority. Higher values means the extension is applied sooner than others. "
-                               "Defaults to 30"],
+            'color': ["black", "Color for lines of the diagram"],
+            'priority': [
+                "30",
+                (
+                    "Extension priority. Higher values means the extension is "
+                    "applied sooner than others. Defaults to 30"
+                )
+            ],
             'base_dir': [".", "Base directory for external files inclusion"],
         }
 
