@@ -19,7 +19,7 @@ using a code-fenced sample as follows:
 ::end-schemdraw::
 ```
 
-## Security Note
+## :warning: Security Note
 
 This package makes use of Python's `exec` functionality, which is inherently
 somewhat insecure, as it allows for arbitrary code execution. Only carfully
@@ -27,6 +27,14 @@ curated drawings logic should be used.
 
 ## Installation
 
+
+### Installing from [PyPI](https://pypi.org/project/schemdraw-markdown/)
+
+Yeah! It's "official," now! You can just *pip-install* the package with:
+
+```shell
+$ pip3 install schemdraw-markdown
+```
 
 #### Installing from Source
 
