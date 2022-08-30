@@ -43,7 +43,7 @@ import schemdraw.elements as elm
 
 
 # Package Version
-__version__ = "0.0.2"
+__version__ = "0.0.3"
 
 
 # use markdown_py with -v to enable warnings, or with --noisy to enable debug
@@ -205,7 +205,7 @@ class SchemDrawPreprocessor(markdown.preprocessors.Preprocessor):
         """Render the Diagram"""
         # Create a Temporary Directory as Needed
         temp_path = None
-        if base_dir ==  "":
+        if base_dir in ["", " ", None]:
             temp_path = TemporaryDirectory()
             base_dir = temp_path.name
 
